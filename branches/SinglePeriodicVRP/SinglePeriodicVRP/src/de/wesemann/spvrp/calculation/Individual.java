@@ -13,7 +13,7 @@ public class Individual implements Cloneable {
 	private List<City>		cities	= new ArrayList<City>();
 	private Period			period;
 	private double			totalDemand;
-	private double			totalDuration;
+	private double			totalDuration;						// Die gesamte Aufenthaltsdauer +
 	private int				indiNumber;
 	/**
 	 * Das genom des Indis (Städte mit -1 für Autowechsel)
@@ -45,116 +45,15 @@ public class Individual implements Cloneable {
 	}
 
 	/**
-	 * @return the cars
+	 * Neues Auto Basteln und die nötigen werte dem auto hinzufügen
+	 * 
+	 * @param id
+	 * @return
 	 */
-	public List<Car> getCars() {
-		return cars;
-	}
-
-	/**
-	 * @return the indiNumber
-	 */
-	public int getIndiNumber() {
-		return indiNumber;
-	}
-
-	/**
-	 * @return the totalDemand
-	 */
-	public double getTotalDemand() {
-		return totalDemand;
-	}
-
-	/**
-	 * @return the totalDuration
-	 */
-	public double getTotalDuration() {
-		return totalDuration;
-	}
-
-	/**
-	 * @param cars
-	 *            the cars to set
-	 */
-	public void setCars(List<Car> cars) {
-		this.cars = cars;
-	}
-
-	/**
-	 * @param indiNumber
-	 *            the indiNumber to set
-	 */
-	public void setIndiNumber(int indiNumber) {
-		this.indiNumber = indiNumber;
-	}
-
-	/**
-	 * @param totalDemand
-	 *            the totalDemand to set
-	 */
-	public void setTotalDemand(double totalDemand) {
-		this.totalDemand = totalDemand;
-	}
-
-	/**
-	 * @param totalDuration
-	 *            the totalDuration to set
-	 */
-	public void setTotalDuration(double totalDuration) {
-		this.totalDuration = totalDuration;
-	}
-
-	/**
-	 * Die Liste der Städte mit -1 für Autowechsel
-	 */
-	public List<Integer> getGenom() {
-
-		return genom;
-	}
-
-	public void setGenom(List<Integer> genom) {
-		this.genom = genom;
-	}
-
-	/**
-	 * @return the period
-	 */
-	public Period getPeriod() {
-		return period;
-	}
-
-	/**
-	 * @param period
-	 *            the period to set
-	 */
-	public void setPeriod(Period period) {
-		this.period = period;
-	}
-
-	/**
-	 * @return the cities
-	 */
-	public List<City> getCities() {
-		return cities;
-	}
-
-	/**
-	 * @param cities
-	 *            the cities to set
-	 */
-	public void setCities(List<City> cities) {
-		this.cities = cities;
-	}
-
-	/**
-	 * zufälliges erstellen des Genoms (Städte + -1 für Autos)
-	 */
-	public void randomCityList() {
-		RandomStart rStart = new RandomStart(cities, period);
-
-		genom = rStart.startRndmCityList();
-
-		createCityList();
+	private Car createCar(int id) {
+		Car car = new Car(id);
+		car.setMaxDemand(period.getMaxLoadPerDayPerCar(0));
+		return car;
 	}
 
 	/**
@@ -212,15 +111,17 @@ public class Individual implements Cloneable {
 	}
 
 	/**
-	 * Neues Auto Basteln und die nötigen werte dem auto hinzufügen
-	 * 
-	 * @param id
-	 * @return
+	 * @return the cars
 	 */
-	private Car createCar(int id) {
-		Car car = new Car(id);
-		car.setMaxDemand(period.getMaxLoadPerDayPerCar(0));
-		return car;
+	public List<Car> getCars() {
+		return cars;
+	}
+
+	/**
+	 * @return the cities
+	 */
+	public List<City> getCities() {
+		return cities;
 	}
 
 	/**
@@ -252,16 +153,81 @@ public class Individual implements Cloneable {
 			fitness = fitness + c.getUsedDuration();
 
 		}
-		if (overloadedCars > 0 || emptyCars > 0)
-			fitness = fitness + ((overloadedCars + emptyCars) * 1000);
+		// if (overloadedCars > 0 || emptyCars > 0)
+		// fitness = fitness + ((overloadedCars + emptyCars) * 1000);
+		fitness = fitness - period.getMaxServiceDurationPerDay()[0];
 		return fitness;
+	}
+
+	/**
+	 * Die Liste der Städte mit -1 für Autowechsel
+	 */
+	public List<Integer> getGenom() {
+
+		return genom;
+	}
+
+	/**
+	 * @return the indiNumber
+	 */
+	public int getIndiNumber() {
+		return indiNumber;
+	}
+
+	/**
+	 * @return the period
+	 */
+	public Period getPeriod() {
+		return period;
+	}
+
+	/**
+	 * @return the totalDemand
+	 */
+	public double getTotalDemand() {
+		return totalDemand;
+	}
+
+	/**
+	 * @return the totalDuration
+	 */
+	public double getTotalDuration() {
+		return totalDuration;
+	}
+
+	/**
+	 * all cars with the costumers, the indiNr, Fitness, usedDemand of all cars
+	 * Distance of all cars, total demand, total duration and total duration - total service duration
+	 * 
+	 * @return the information about this indivduell
+	 */
+	public String indiToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("InidNR.: " + this.indiNumber);
+		sb.append("\nFitness: " + this.getFitness());
+		for (Car c : cars) {
+			double totalServiceDuration = 0;
+			totalDemand = totalDemand + c.getUsedDemand();
+			totalDuration = totalDuration + c.getUsedDuration(); // Wie lang sind alle autos unterwegs
+
+			sb.append("\nauto " + c.getCarNumber() + ": ");
+			for (City ci : c.getCitiesToDrive()) {
+				sb.append("->" + ci.getCityNumber());
+				totalServiceDuration = totalServiceDuration + ci.getServiceDuration();
+			}
+			sb.append(" Last " + c.getUsedDemand() + " Dist: " + (c.getUsedDuration() - totalServiceDuration));
+		}
+		sb.append("\ndemand: " + totalDemand + " duration: " + totalDuration + " ohne: "
+				+ (totalDuration - period.getMaxServiceDurationPerDay()[0]));
+
+		return sb.toString();
 	}
 
 	public void printCars() {
 		System.out.println("InidNR.: " + this.indiNumber);
 		System.out.println("Fitness: " + this.getFitness());
-		double totalServiceDuration = 0;
 		for (Car c : cars) {
+			double totalServiceDuration = 0;
 			totalDemand = totalDemand + c.getUsedDemand();
 			totalDuration = totalDuration + c.getUsedDuration(); // Wie lang sind alle autow unterwegs
 
@@ -270,9 +236,72 @@ public class Individual implements Cloneable {
 				System.out.print("->" + ci.getCityNumber());
 				totalServiceDuration = totalServiceDuration + ci.getServiceDuration();
 			}
-			System.out.println(" Last " + c.getUsedDemand() + " Dist: " + c.getUsedDuration());
+			System.out.println(" Last " + c.getUsedDemand() + " Dist: " + (c.getUsedDuration() - totalServiceDuration));
 		}
 		System.out.println("demand: " + totalDemand + " duration: " + totalDuration + " ohne: "
-				+ (totalDuration - totalServiceDuration));
+				+ (totalDuration - period.getMaxServiceDurationPerDay()[0]));
+	}
+
+	/**
+	 * zufälliges erstellen des Genoms (Städte + -1 für Autos)
+	 */
+	public void randomCityList() {
+		RandomStart rStart = new RandomStart(cities, period);
+
+		genom = rStart.startRndmCityList();
+
+		createCityList();
+	}
+
+	/**
+	 * @param cars
+	 *            the cars to set
+	 */
+	public void setCars(List<Car> cars) {
+		this.cars = cars;
+	}
+
+	/**
+	 * @param cities
+	 *            the cities to set
+	 */
+	public void setCities(List<City> cities) {
+		this.cities = cities;
+	}
+
+	public void setGenom(List<Integer> genom) {
+		this.genom = genom;
+	}
+
+	/**
+	 * @param indiNumber
+	 *            the indiNumber to set
+	 */
+	public void setIndiNumber(int indiNumber) {
+		this.indiNumber = indiNumber;
+	}
+
+	/**
+	 * @param period
+	 *            the period to set
+	 */
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	/**
+	 * @param totalDemand
+	 *            the totalDemand to set
+	 */
+	public void setTotalDemand(double totalDemand) {
+		this.totalDemand = totalDemand;
+	}
+
+	/**
+	 * @param totalDuration
+	 *            the totalDuration to set
+	 */
+	public void setTotalDuration(double totalDuration) {
+		this.totalDuration = totalDuration;
 	}
 }
