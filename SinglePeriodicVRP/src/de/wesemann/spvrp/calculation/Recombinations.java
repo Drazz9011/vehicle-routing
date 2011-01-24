@@ -15,43 +15,30 @@ import de.wesemann.spvrp.data.Period;
  * 
  */
 public class Recombinations {
-	private Random	rndm	= new Random();
-
-	/**
-	 * Die KantenRekombination von zwei individuen
-	 * 
-	 * @return
-	 */
-	public Individual kantenRekomb() {
-
-		return new Individual();
-	}
+	// private static Random rndm = new Random();
 
 	/**
 	 * Ordnungsrekombination
 	 */
-	public Individual ordnungsRekombination(Individual indA, Individual indB) {
+	public static Individual ordnungsRekombination(Individual indA, Individual indB) {
+		Random rndm = new Random();
 		Individual indC = new Individual();
 		double totalDemand = indA.getTotalDemand();
 		double totalDuration = indA.getTotalDuration();
 		Period period = indA.getPeriod();
 		List<Integer> genomA = new ArrayList<Integer>();
 		List<Integer> genomB = new ArrayList<Integer>();
-		// indC.setCars(indA.getCars());
 		indC.setTotalDemand(totalDemand);
 		indC.setTotalDuration(totalDuration);
 		indC.setPeriod(period);
 		indC.setCities(indA.getCities());
 		int maxCars = indA.getCars().size() - 1;
-//		System.out.println("Rekombination Anz. Autos: " + indA.getCars().size());
+
 		// Die Genome der Individuen
 		List<Integer> genomC = new ArrayList<Integer>();
 		genomA.addAll(indA.getGenom());
 		genomB.addAll(indB.getGenom());
-//		Collections.copy(genomA, indA.getGenom());
-//		Collections.copy(genomB, indB.getGenom());
-//		System.arraycopy(indA.getGenom(), 0, genomA, 0, indA.getGenom().size());
-//		System.arraycopy(indB.getGenom(), 0, genomB, 0, indB.getGenom().size());
+
 		// erste Stelle hinzufügen da es immer eine -1 ist. (für das erste Auto)
 		genomC.add(-1);
 
@@ -60,8 +47,7 @@ public class Recombinations {
 		genomB.remove(0);
 		genomA.remove(genomA.size() - 1);
 		genomB.remove(genomB.size() - 1);
-//		System.out.println("genomA getrimt: " + genomA.toString());
-//		System.out.println("genomB getrimt: " + genomB.toString());
+
 		// start der Rekombination
 		int j = rndm.nextInt(genomA.size() - 1); // Bis zum j. Punkt alle Genome aus Elter A
 
@@ -91,23 +77,14 @@ public class Recombinations {
 			}
 		}
 		genomC.add(-1); // das letzte -1 damit das letzte auto weiss das es nach hause fahren muss
-//		genomA.add(0, -1);
-//		genomB.add(0, -1);
-//		genomA.add(genomA.size(), -1);
-//		genomB.add(genomB.size(), -1);
-//		System.out.println("genomA nach Rkomb: " + genomA.toString());
-//		System.out.println("genomB nach Rkomb: " + genomB.toString());
 		indC.setGenom(genomC);
 		indC.createCityList();
 		return indC;
 	}
 
 	/**
-	 * Kantenrekombination
-	 */
-
-	/**
 	 * Abbildungrekombination zweier Indis
+	 * Funktioniert noch nicht richtig
 	 * 
 	 * @param indA
 	 *            Das erste Indi
@@ -117,8 +94,7 @@ public class Recombinations {
 	 */
 	public Individual abbildungsRekombination(Individual indA, Individual indB) {
 		Individual indC = new Individual();
-//		System.out.println("indA " + indA.getIndiNumber() + " genom: " + indA.getGenom().toString() + "\nindB "
-//				+ indB.getIndiNumber() + " genom: " + indB.getGenom().toString());
+
 		List<Integer> genomA = indA.getGenom(); // Genome des Indis A
 		List<Integer> genomB = indB.getGenom(); // Genome des Indis B
 		List<Integer> genomC = new ArrayList<Integer>();
@@ -136,7 +112,7 @@ public class Recombinations {
 			u2 = u1;
 			u1 = temp;
 		}
-//		System.out.println("Anz Genome: " + genomlength + " u1: " + u1 + " u2: " + u2);
+		// System.out.println("Anz Genome: " + genomlength + " u1: " + u1 + " u2: " + u2);
 
 		// Füllen des IndisC mit -2 damit die Länge der normelaen genom länge entspricht
 		for (int i = 0; i < genomlength; i++) {
@@ -154,7 +130,7 @@ public class Recombinations {
 				benutzt.add(genomB.get(j)); // das vergebene Genom zu der benutzt liste hinzufügen
 			}
 		}
-//		System.out.println(genomC.toString());
+		// System.out.println(genomC.toString());
 		int currentPos = 0;
 		// hinzufügen der restlichen genome zu Indi C
 		/*
@@ -175,7 +151,7 @@ public class Recombinations {
 				} else if (x != -1) {
 
 					while (benutzt.contains(x)) {// haut noch nicht so ganz hin.... Das mit der -1..daran muss cih noch arbeiten
-//						System.out.println(x + " bei pos " + currentPos);
+					// System.out.println(x + " bei pos " + currentPos);
 						currentPos = genomA.indexOf(x);
 
 						while (genomB.get(currentPos).equals(x)) {
@@ -185,7 +161,7 @@ public class Recombinations {
 
 						// System.out.println(currentPos);
 					}
-//					System.out.println("genommen: " + x);
+					// System.out.println("genommen: " + x);
 					if (x != -1) { // wenn x kein auto dann kann es mit zu den benutzten hinzugefügt
 									// werden
 						genomC.set(i, x);
@@ -209,9 +185,23 @@ public class Recombinations {
 				// }
 			}
 		}
-//		System.out.println(genomC.toString() + " anz: " + genomC.size());
+		// System.out.println(genomC.toString() + " anz: " + genomC.size());
 		Collections.sort(genomC);
-//		System.out.println(genomC);
+		// System.out.println(genomC);
 		return indC;
+	}
+
+	/**
+	 * Kantenrekombination
+	 */
+
+	/**
+	 * Die KantenRekombination von zwei individuen
+	 * 
+	 * @return
+	 */
+	public Individual kantenRekomb() {
+
+		return new Individual();
 	}
 }

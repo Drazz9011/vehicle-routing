@@ -30,8 +30,8 @@ public class Mutations {
 		// --------------------zufallszahlen für die Positionen die getauscht werden sollen ------------------------
 		int u1 = rndm.nextInt(child.getGenom().size() - 1);
 		int u2 = rndm.nextInt(child.getGenom().size() - 1);
-//		System.out.println("oldchild: " + child.getGenom().toString());
-//		System.out.println("u1: " + u1 + " u2: " + u2);
+		// System.out.println("oldchild: " + child.getGenom().toString());
+		// System.out.println("u1: " + u1 + " u2: " + u2);
 
 		// ----------------Tauschen der Positionen -----------------------------------
 		if (u1 > u2) {
@@ -53,7 +53,7 @@ public class Mutations {
 		child.getGenom().add(0, -1);
 		child.getGenom().add(-1);
 
-//		System.out.println("newchild: " + child.getGenom().toString());
+		// System.out.println("newchild: " + child.getGenom().toString());
 		child.createCityList(); // berechnen des ganzen spasses
 
 		return child;

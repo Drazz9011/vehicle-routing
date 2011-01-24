@@ -1,7 +1,6 @@
 package de.wesemann.spvrp.calculation;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -19,10 +18,8 @@ import de.wesemann.spvrp.data.Store;
  * 
  */
 public class Algorithm {
-	/*
-	 * -TODO Den Evo Alg noch basteln + mutation + Rekombination (siehe startEvolution)
-	 */
 
+	private Store				store;												// Ordner in dem die Daten gespeichert werden sollen
 	private List<City>			cities				= new ArrayList<City>();
 	private Period				period;
 	/**
@@ -42,6 +39,10 @@ public class Algorithm {
 	private Random				rndm				= new Random();
 
 	private String				geladeneDatei;
+
+	public Algorithm() {
+
+	}
 
 	/**
 	 * Der Algorithmuss der die Individuen und Population verwaltet und
@@ -67,8 +68,25 @@ public class Algorithm {
 		// indis = new Individual[this.anzIndividuen];
 	}
 
-	public Algorithm() {
+	/**
+	 * @return the anzIndividuen
+	 */
+	public int getAnzIndividuen() {
+		return anzIndividuen;
+	}
 
+	/**
+	 * @return the anzPopulations
+	 */
+	public int getAnzPopulations() {
+		return anzPopulations;
+	}
+
+	/**
+	 * @return the anzWählendeIndis
+	 */
+	public int getAnzWählendeIndis() {
+		return anzWählendeIndis;
 	}
 
 	/**
@@ -79,6 +97,63 @@ public class Algorithm {
 	 */
 	public List<City> getCities() {
 		return cities;
+	}
+
+	/**
+	 * @return the geladeneDatei
+	 */
+	public String getGeladeneDatei() {
+		return geladeneDatei;
+	}
+
+	/**
+	 * @return the mutWkt
+	 */
+	public double getMutWkt() {
+		return mutWkt;
+	}
+
+	/**
+	 * Holen der Periode
+	 * 
+	 * @return the period
+	 * @see Period
+	 */
+	public Period getPeriod() {
+		return period;
+	}
+
+	/**
+	 * Die Rekombinatinoswkt px
+	 * 
+	 * @return the px
+	 */
+	public double getPx() {
+		return px;
+	}
+
+	/**
+	 * @param anzIndividuen
+	 *            the anzIndividuen to set
+	 */
+	public void setAnzIndividuen(int anzIndividuen) {
+		this.anzIndividuen = anzIndividuen;
+	}
+
+	/**
+	 * @param anzPopulations
+	 *            the anzPopulations to set
+	 */
+	public void setAnzPopulations(int anzPopulations) {
+		this.anzPopulations = anzPopulations;
+	}
+
+	/**
+	 * @param anzWählendeIndis
+	 *            the anzWählendeIndis to set
+	 */
+	public void setAnzWählendeIndis(int anzWählendeIndis) {
+		this.anzWählendeIndis = anzWählendeIndis;
 	}
 
 	/**
@@ -93,13 +168,19 @@ public class Algorithm {
 	}
 
 	/**
-	 * Holen der Periode
-	 * 
-	 * @return the period
-	 * @see Period
+	 * @param geladeneDatei
+	 *            the geladeneDatei to set
 	 */
-	public Period getPeriod() {
-		return period;
+	public void setGeladeneDatei(String geladeneDatei) {
+		this.geladeneDatei = geladeneDatei;
+	}
+
+	/**
+	 * @param mutWkt
+	 *            the mutWkt to set
+	 */
+	public void setMutWkt(double mutWkt) {
+		this.mutWkt = mutWkt;
 	}
 
 	/**
@@ -116,15 +197,6 @@ public class Algorithm {
 	/**
 	 * Die Rekombinatinoswkt px
 	 * 
-	 * @return the px
-	 */
-	public double getPx() {
-		return px;
-	}
-
-	/**
-	 * Die Rekombinatinoswkt px
-	 * 
 	 * @param px
 	 *            Die höhe Rekombinationswahrscheinlichkeit
 	 */
@@ -133,101 +205,13 @@ public class Algorithm {
 	}
 
 	/**
-	 * @return the anzWählendeIndis
-	 */
-	public int getAnzWählendeIndis() {
-		return anzWählendeIndis;
-	}
-
-	/**
-	 * @param anzWählendeIndis
-	 *            the anzWählendeIndis to set
-	 */
-	public void setAnzWählendeIndis(int anzWählendeIndis) {
-		this.anzWählendeIndis = anzWählendeIndis;
-	}
-
-	/**
-	 * @return the anzIndividuen
-	 */
-	public int getAnzIndividuen() {
-		return anzIndividuen;
-	}
-
-	/**
-	 * @param anzIndividuen
-	 *            the anzIndividuen to set
-	 */
-	public void setAnzIndividuen(int anzIndividuen) {
-		this.anzIndividuen = anzIndividuen;
-	}
-
-	/**
-	 * @return the anzPopulations
-	 */
-	public int getAnzPopulations() {
-		return anzPopulations;
-	}
-
-	/**
-	 * @param anzPopulations
-	 *            the anzPopulations to set
-	 */
-	public void setAnzPopulations(int anzPopulations) {
-		this.anzPopulations = anzPopulations;
-	}
-
-	/**
-	 * @return the mutWkt
-	 */
-	public double getMutWkt() {
-		return mutWkt;
-	}
-
-	/**
-	 * @param mutWkt
-	 *            the mutWkt to set
-	 */
-	public void setMutWkt(double mutWkt) {
-		this.mutWkt = mutWkt;
-	}
-
-	/**
-	 * @return the geladeneDatei
-	 */
-	public String getGeladeneDatei() {
-		return geladeneDatei;
-	}
-
-	/**
-	 * @param geladeneDatei
-	 *            the geladeneDatei to set
-	 */
-	public void setGeladeneDatei(String geladeneDatei) {
-		this.geladeneDatei = geladeneDatei;
-	}
-
-	/**
-	 * erste Runde
-	 * Erzeugen aller Individuen
+	 * the path where the data should be stored
 	 * 
-	 * @see Algorithm#anzIndividuen
-	 * @see Individual
-	 * 
+	 * @param path
+	 *            the path
 	 */
-	private void startRandom() {
-		// this.anzIndividuen = popGröße;
-		// long start = System.currentTimeMillis();
-
-		for (int i = 0; i < anzIndividuen; i++) {
-			indis.add(new Individual(i, cities, period));
-			indis.get(i).randomCityList();
-			// indis[i].printCars();
-			System.out.println(indis.get(i).getIndiNumber() + "	" + indis.get(i).getFitness() + "	"
-					+ indis.get(i).getGenom().toString());
-		}
-
-		// System.out.println("Dauer: " + (System.currentTimeMillis() - start) + "ms");
+	public void setStorePath(String path) {
+		store = new Store(path);
 	}
 
 	/**
@@ -247,6 +231,32 @@ public class Algorithm {
 	}
 
 	/**
+	 * erste Runde
+	 * Erzeugen aller Individuen
+	 * 
+	 * @see Algorithm#anzIndividuen
+	 * @see Individual
+	 * 
+	 */
+	private void startRandom() {
+		// this.anzIndividuen = popGröße;
+		// long start = System.currentTimeMillis();
+
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < anzIndividuen; i++) {
+			indis.add(new Individual(i, cities, period));
+			indis.get(i).randomCityList();
+			// indis[i].printCars();
+			// System.out.println(indis.get(i).getIndiNumber() + "	" + indis.get(i).getFitness() + "	"
+			// + indis.get(i).getGenom().toString());
+			sb.append(indis.get(i).getIndiNumber() + "	" + indis.get(i).getFitness() + "	"
+					+ indis.get(i).getGenom().toString() + "\n");
+		}
+
+		store.storeData(sb.toString(), "startIndis.csv");
+	}
+
+	/**
 	 * Steady State GA da ich glaube das eine Überlappende Pop
 	 * am besten für das VRP geeignet ist
 	 */
@@ -254,18 +264,12 @@ public class Algorithm {
 		startRandom(); // erste population wird zufällig generiert
 
 		Individual indC = new Individual(); // das Kind indi
-		Selections sel = new Selections(anzWählendeIndis); // die Selektion
-		Recombinations recomb = new Recombinations(); // Rekombination
-		Store store = new Store();
 
-		// Zeitstempel_AnzIndi_AnzPops_rekombwkt_mutwkt_Name der geladenen Datei
-//		String fileName = new Date(System.currentTimeMillis()) + "_" + anzIndividuen + "_" + anzPopulations + "_"
-//				+ getPx() + "_" + mutWkt + "_" + geladeneDatei;
-		String fileName = "test";
-		store.createFileAndHead(fileName);
+		StringBuffer sbAverage = new StringBuffer();
+		StringBuffer sbBest = new StringBuffer();
+		StringBuffer sbRecomb = new StringBuffer("IndA;IndB;Child\n");
+
 		double u;// wkt für die Rekomb
-		boolean isRecomb = false;
-		boolean isMut = false;
 		Individual indi1; // erste indi für die rekomb
 		Individual indi2; // zweite indi für die rekomb
 		Individual bestIndi = new Individual();
@@ -273,27 +277,19 @@ public class Algorithm {
 
 		// terminierungsbedingung ist (erstmal) die anzahl der Populationen
 		for (int i = 0; i < anzPopulations; i++) {
-
 			indi1 = null;
 			indi2 = null;
 			// System.out.println("--------------Runde " + i + "-----------------------");
 
 			// ----------------------------- Liste der Selektierten Individuen -----------------------------------
-
-			indi1 = sel.qFacheTurnierSelection(indis, 3);
-			indi2 = sel.qFacheTurnierSelection(indis, 3);
-			// System.out.println(indi1.getIndiNumber() + ": " + indi1.getFitness());
-			// System.out.println(indi2.getIndiNumber() + ": " + indi2.getFitness());
-
+			indi1 = Selections.qFacheTurnierSelection(indis, 2);
+			indi2 = Selections.qFacheTurnierSelection(indis, 2);
 			// ---------------------------------- Rekombination ------------------------------------------------
 			u = rndm.nextDouble(); // wkt für die Rekomb
 			if (u < px) {
-				// System.out.println("Rekombination");
-				isRecomb = true;
-				indC = recomb.ordnungsRekombination(indi1, indi2);
+				indC = Recombinations.ordnungsRekombination(indi1, indi2);
+
 			} else {
-				// System.out.println("keine Rekombination");
-				isRecomb = false;
 				double totalDemand = indi1.getTotalDemand();
 				double totalDuration = indi1.getTotalDuration();
 				Period period = indi1.getPeriod();
@@ -310,11 +306,7 @@ public class Algorithm {
 			// ------------------------------ Mutation ---------------------------------
 			u = rndm.nextDouble(); // wkt für die Rekomb
 			if (u < mutWkt) {
-				// System.out.println("Mutation");
-				isMut = true;
 				Mutations.verschiebeMutation(indC);
-			} else {
-				isMut = false;
 			}
 
 			// ----------------- Beste und schlechteste Indi raussuchen ------------------------------
@@ -331,22 +323,28 @@ public class Algorithm {
 					bestIndi = ind;
 				}
 			}
-			// System.out.println("beste Indi: " + bestIndi.getIndiNumber() + " Fitness: " + bestIndi.getFitness());
-			// System.out
-			// .println("schlechteste Indi: " + worstIndi.getIndiNumber() + " Fitness " + worstIndi.getFitness());
 
-			// Speichern der aktuellen Runde
-			// Runde;best indi(fitness); worst indi(fitness); Rekomb(bool); indi1(fitness); indi2(fitness); indiNeu; Mut(bool);
-//			store.storeDataPopulation(i + ";" + bestIndi.getFitness() + ";" + worstIndi.getFitness() + ";" + isRecomb
-//					+ ";" + indi1.getFitness() + ";" + indi2.getFitness() + ";" + indC.getFitness() + ";" + isMut);
-			store.storeDataPopulation(""+bestIndi.getFitness());
+			// average Individual
+			double fitness = 0;
+			for (Individual ind : indis) {
+				fitness = fitness + ind.getFitness();
+			}
+			fitness = fitness / indis.size();
+
+			sbAverage.append(fitness + "\n");
+			sbBest.append(bestIndi.getFitness() + "\n");
+			sbRecomb.append(indi1.getFitness() + ";" + indi2.getFitness() + ";" + indC.getFitness() + "\n");
+
+			// *********************Umweltselektion************************
+			Individual worst = Selections.qStufigeTurnierSelection(indis, 3, 1).get(0);
+			indC.setIndiNumber(worst.getIndiNumber());
+			indis.remove(worst);
+			indis.add(worst.getIndiNumber(), indC);
+
 			// schlechteste aus der aktuellen Pop mit neuem Indi ersetzen
-			indC.setIndiNumber(worstIndi.getIndiNumber());
-			// System.out.println("GenomC Nr.:" + indC.getIndiNumber() + " Fitness:" + indC.getFitness());
-
-			// entfernen des schlechtesten und hinzufügen des kindes
-			indis.remove(worstIndi);
-			indis.add(worstIndi.getIndiNumber(), indC);
+			// indC.setIndiNumber(worstIndi.getIndiNumber());
+			// indis.remove(worstIndi);//vielleciht zu hart
+			// indis.add(worstIndi.getIndiNumber(), indC);
 
 		}
 		System.out.println("###############alle#####################");
@@ -362,9 +360,15 @@ public class Algorithm {
 				bestIndi = ind;
 			}
 		}
-		System.out.println(indis.size());
 		System.out.println("****************best*******************");
 		bestIndi.printCars();
-		// Speichern des besten Indis
+		store.storeData(bestIndi.indiToString(), "bestIndiWithCars");
+		store.storeData(sbAverage.toString(), "average.csv");
+		store.closeWriter();
+		store.storeData(sbBest.toString(), "best.csv");
+		store.closeWriter();
+		store.storeData(sbRecomb.toString(), "recomb.csv");
+		store.closeWriter();
 	}
+
 }
