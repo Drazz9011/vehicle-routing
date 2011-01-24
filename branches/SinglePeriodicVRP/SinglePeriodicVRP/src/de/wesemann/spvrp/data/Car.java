@@ -17,11 +17,11 @@ public class Car {
 	private List<City>	citiesToDrive;
 	private int			carNumber;
 
-	private int			maxDemand		= 0;						// max Bedarf (Load) (wenn 0 losfahren wenn 200 zum depot und neu beladen)
-	private int			usedDemand		= 0;
+	private int			maxDemand	= 0;	// max Bedarf (Load) (wenn 0 losfahren wenn 200 zum depot und neu beladen)
+	private int			usedDemand	= 0;
 
-	private double		maxDuration;								// Die Maximal Zeit pro Periode
-	private double		usedDuration;								// Die verbrauchte Zeit
+	private double		maxDuration;		// Die Maximal Zeit pro Periode
+	private double		usedDuration;		// Die verbrauchte Zeit
 
 	public Car() {
 
@@ -42,7 +42,7 @@ public class Car {
 	 * @param city
 	 */
 	public void addCityToDrive(City city) {
-		if(citiesToDrive==null){
+		if (citiesToDrive == null) {
 			citiesToDrive = new ArrayList<City>();
 		}
 		this.citiesToDrive.add(city);
@@ -125,7 +125,7 @@ public class Car {
 	 *            the citiesToDrive to set
 	 */
 	public void setCitiesToDrive(List<City> citiesToDrive) {
-		if(citiesToDrive==null){
+		if (citiesToDrive == null) {
 			citiesToDrive = new ArrayList<City>();
 		}
 		this.citiesToDrive = citiesToDrive;
@@ -142,8 +142,8 @@ public class Car {
 	}
 
 	/**
-	 * Die Maximal Zeit die ein Auto unterwegs sein darf
-	 * <br> Dran denken dass die Zentrale zum schluss auch noch mit reingerechnet werden muss!!
+	 * Die Maximal Zeit die ein Auto unterwegs sein darf <br>
+	 * Dran denken dass die Zentrale zum schluss auch noch mit reingerechnet werden muss!!
 	 * 
 	 * @param maxDuration
 	 *            the maxDuration to set

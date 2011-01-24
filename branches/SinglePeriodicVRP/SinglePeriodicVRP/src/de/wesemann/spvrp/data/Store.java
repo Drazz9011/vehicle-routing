@@ -1,8 +1,8 @@
 package de.wesemann.spvrp.data;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Store {
 	/**
@@ -12,21 +12,31 @@ public class Store {
 	 * Vehicle; Last; Streckedauer (ohne Kunden Zeit); a->b->c->
 	 */
 
-	String		fileName;
 	File		file;
-	PrintWriter	writer;
+	FileWriter	writer;
+	String		dir;
 
 	public Store() {
 
 	}
 
-	public void createFileAndHead(String fileName) {
-		this.fileName = fileName;
-		file = new File(fileName + ".csv");
+	/**
+	 * creates the dir
+	 * 
+	 * @param dir
+	 *            the dir to create
+	 */
+	public Store(String dir) {
+
+		this.dir = dir;
+		File file = new File(dir);
+		file.mkdir();
+	}
+
+	public void closeWriter() {
 		try {
-			writer = new PrintWriter(file);
-//			writer.write("Runde;best indi(fitness); worst indi(fitness); Rekomb(bool); indi1(fitness); indi2(fitness); indiNeu; Mut(bool);");
-		} catch (FileNotFoundException e) {
+			writer.close();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -36,21 +46,24 @@ public class Store {
 	 * speichert die aktuelle Population
 	 * Runde;best indi(fitness); worst indi(fitness); Rekomb(bool); indi1(fitness); indi2(fitness); indiNeu; Mut(bool);
 	 */
-	public void storeDataPopulation(String aktuelleDaten) {
+	public void storeData(String aktuelleDaten, String fileName) {
+		File file = new File(dir, fileName);
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			writer = new FileWriter(file);
 
-		writer.append("\n" + aktuelleDaten);
+			writer.write(aktuelleDaten);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
-	public void closeWriter() {
-		writer.close();
-	}
-
-	/**
-	 * speichert das beste indi. Dies geschieht nachdem der alg mit allen Generationen fertig ist
-	 * Dauer des gesamten Durchgangs
-	 */
-	public void storeBestIndi() {
-
-	}
 }

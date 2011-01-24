@@ -37,36 +37,6 @@ public class City {
 	}
 
 	/**
-	 * @return the coords
-	 */
-	public Point getCoords() {
-		return coords;
-	}
-
-	/**
-	 * @param coords
-	 *            the coords to set
-	 */
-	public void setCoords(Point coords) {
-		this.coords = coords;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
 	 * Hinzufügen der Distanz zum Nachbarn
 	 * 
 	 * @param street
@@ -76,6 +46,46 @@ public class City {
 	 */
 	public void addDistanceToNeighbour(Double distance, City neighbour) {
 		this.distanceToNeighbour.put(neighbour, distance);
+	}
+
+	/**
+	 * Eine Mögliche Besuchskombination hinzufügen (Ganzzahlig!!!)
+	 * 
+	 * @param visitCombination
+	 */
+	public void addVisitCombination(int visitCombination) {
+		this.listOfAllVisitCombinations.add(visitCombination);
+	}
+
+	/**
+	 * @return the beginningTimeWindow
+	 */
+	public int getBeginningTimeWindow() {
+		return beginningTimeWindow;
+	}
+
+	/**
+	 * @return the cityNumber
+	 */
+	public int getCityNumber() {
+		return cityNumber;
+	}
+
+	/**
+	 * @return the coords
+	 */
+	public Point getCoords() {
+		return coords;
+	}
+
+	/**
+	 * Die Kapazität die die Stadt benötigt<br>
+	 * default = 200;
+	 * 
+	 * @return the demand
+	 */
+	public int getDemand() {
+		return demand;
 	}
 
 	/**
@@ -99,60 +109,10 @@ public class City {
 	}
 
 	/**
-	 * @return the cityNumber
+	 * @return the endOfTimeWindow
 	 */
-	public int getCityNumber() {
-		return cityNumber;
-	}
-
-	/**
-	 * @param cityNumber
-	 *            the cityNumber to set
-	 */
-	public void setCityNumber(int cityNumber) {
-		this.cityNumber = cityNumber;
-	}
-
-	/**
-	 * Die Kapazität die die Stadt benötigt<br>
-	 * default = 200;
-	 * 
-	 * @return the demand
-	 */
-	public int getDemand() {
-		return demand;
-	}
-
-	/**
-	 * Setzer der Kapazität die die Stadt benötigt<br>
-	 * default = 200;
-	 * 
-	 * @param demand
-	 *            the demand to set
-	 */
-	public void setDemand(int demand) {
-		this.demand = demand;
-	}
-
-	/**
-	 * Die Dauer die der Handelsmann in der STadt bleiben muss <br>
-	 * default = 90;
-	 * 
-	 * @return the serviceDuration
-	 */
-	public int getServiceDuration() {
-		return serviceDuration;
-	}
-
-	/**
-	 * Setzen der Dauer die der Handelsmann in der Stadt bleiben muss<br>
-	 * default = 90;
-	 * 
-	 * @param serviceDuration
-	 *            the serviceDuration to set
-	 */
-	public void setServiceDuration(int serviceDuration) {
-		this.serviceDuration = serviceDuration;
+	public int getEndOfTimeWindow() {
+		return endOfTimeWindow;
 	}
 
 	/**
@@ -162,16 +122,6 @@ public class City {
 	 */
 	public int getFrequenzyOfVisit() {
 		return frequenzyOfVisit;
-	}
-
-	/**
-	 * Wie oft er die Stadt Periode angefahren werden möchte
-	 * 
-	 * @param frequenzyOfVisit
-	 *            the frequenzyOfVisit to set
-	 */
-	public void setFrequenzyOfVisit(int frequenzyOfVisit) {
-		this.frequenzyOfVisit = frequenzyOfVisit;
 	}
 
 	/**
@@ -190,27 +140,29 @@ public class City {
 	}
 
 	/**
-	 * @param listOfAllVisitCombinations
-	 *            the listOfAllVisitCombinations to set
+	 * @return the name
 	 */
-	public void setListOfAllVisitCombinations(List<Integer> listOfAllVisitCombinations) {
-		this.listOfAllVisitCombinations = listOfAllVisitCombinations;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * Eine Mögliche Besuchskombination hinzufügen (Ganzzahlig!!!)
+	 * Die Dauer die der Handelsmann in der STadt bleiben muss <br>
+	 * default = 90;
 	 * 
-	 * @param visitCombination
+	 * @return the serviceDuration
 	 */
-	public void addVisitCombination(int visitCombination) {
-		this.listOfAllVisitCombinations.add(visitCombination);
+	public int getServiceDuration() {
+		return serviceDuration;
 	}
 
-	/**
-	 * @return the beginningTimeWindow
-	 */
-	public int getBeginningTimeWindow() {
-		return beginningTimeWindow;
+	public String printNeighbours() {
+		StringBuilder sb = new StringBuilder();
+		for (City c : distanceToNeighbour.keySet()) {
+			sb.append(this.cityNumber + " -> " + f.format(distanceToNeighbour.get(c)) + "ZE -> " + c.getCityNumber()
+					+ ", ");
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -222,10 +174,38 @@ public class City {
 	}
 
 	/**
-	 * @return the endOfTimeWindow
+	 * @param cityNumber
+	 *            the cityNumber to set
 	 */
-	public int getEndOfTimeWindow() {
-		return endOfTimeWindow;
+	public void setCityNumber(int cityNumber) {
+		this.cityNumber = cityNumber;
+	}
+
+	/**
+	 * @param coords
+	 *            the coords to set
+	 */
+	public void setCoords(Point coords) {
+		this.coords = coords;
+	}
+
+	/**
+	 * Setzer der Kapazität die die Stadt benötigt<br>
+	 * default = 200;
+	 * 
+	 * @param demand
+	 *            the demand to set
+	 */
+	public void setDemand(int demand) {
+		this.demand = demand;
+	}
+
+	/**
+	 * @param distanceToNeighbour
+	 *            the distanceToNeighbour to set
+	 */
+	public void setDistanceToNeighbour(Map<City, Double> distanceToNeighbour) {
+		this.distanceToNeighbour = distanceToNeighbour;
 	}
 
 	/**
@@ -237,11 +217,40 @@ public class City {
 	}
 
 	/**
-	 * @param distanceToNeighbour
-	 *            the distanceToNeighbour to set
+	 * Wie oft er die Stadt Periode angefahren werden möchte
+	 * 
+	 * @param frequenzyOfVisit
+	 *            the frequenzyOfVisit to set
 	 */
-	public void setDistanceToNeighbour(Map<City, Double> distanceToNeighbour) {
-		this.distanceToNeighbour = distanceToNeighbour;
+	public void setFrequenzyOfVisit(int frequenzyOfVisit) {
+		this.frequenzyOfVisit = frequenzyOfVisit;
+	}
+
+	/**
+	 * @param listOfAllVisitCombinations
+	 *            the listOfAllVisitCombinations to set
+	 */
+	public void setListOfAllVisitCombinations(List<Integer> listOfAllVisitCombinations) {
+		this.listOfAllVisitCombinations = listOfAllVisitCombinations;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Setzen der Dauer die der Handelsmann in der Stadt bleiben muss<br>
+	 * default = 90;
+	 * 
+	 * @param serviceDuration
+	 *            the serviceDuration to set
+	 */
+	public void setServiceDuration(int serviceDuration) {
+		this.serviceDuration = serviceDuration;
 	}
 
 	/*
@@ -254,14 +263,5 @@ public class City {
 				+ ", frequenzyOfVisit=" + frequenzyOfVisit + ", listOfAllVisitCombinations="
 				+ listOfAllVisitCombinations + ", beginningTimeWindow=" + beginningTimeWindow + ", endOfTimeWindow="
 				+ endOfTimeWindow + ", serviceDuration=" + serviceDuration + "]";
-	}
-
-	public String printNeighbours() {
-		StringBuilder sb = new StringBuilder();
-		for (City c : distanceToNeighbour.keySet()) {
-			sb.append(this.cityNumber + " -> " + f.format(distanceToNeighbour.get(c)) + "ZE -> " + c.getCityNumber()
-					+ ", ");
-		}
-		return sb.toString();
 	}
 }

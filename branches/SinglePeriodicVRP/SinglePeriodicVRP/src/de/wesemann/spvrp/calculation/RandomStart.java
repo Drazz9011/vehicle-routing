@@ -1,7 +1,6 @@
 package de.wesemann.spvrp.calculation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -23,6 +22,10 @@ public class RandomStart {
 	private List<Car>	cars			= new ArrayList<Car>();
 	private Period		period;
 
+	public RandomStart() {
+
+	}
+
 	/**
 	 * zufällige Aufteilung der STädte auf die Autos damit diese die Befahren können<br>
 	 * Einzige einschränkung die hier gemacht wird ist das die Maximal Last nicht überschritten werden darf
@@ -39,72 +42,6 @@ public class RandomStart {
 		this.cities = cities;
 		this.period = period;
 
-	}
-
-	public RandomStart() {
-
-	}
-
-	/**
-	 * Zufällige verteilen der Städte mit Seperator (-1)
-	 * damit erkannt wird wann das nächste auto an der reihe ist
-	 * Dabei werden nie mehr Seperatoren als Autos eingesetzt.
-	 * Die Seps werden zufällig gesetzt. Sollten alls Seps gesetzt
-	 * sein so bekommt das letzte auto die Restlichen Städte.
-	 * Des Weiteren wird auch nciht auf die Max Ladung der Autos geachtet.
-	 * <br>
-	 * Die Basis steht nicht mehr in der Indi List drin. Wird aber bei
-	 * der Berechnung mit einbezogen. -1 Steht also für neues Auto Startet
-	 * von 0 (basis) bzw. endet bei Basis und anderes Auto fährt von Basis los
-	 * @return Die Liste mit den Städte nr. und Seperatoren
-	 */
-	public List<Integer> startRndmCityList() {
-		List<Integer> genom = new ArrayList<Integer>();
-		int countCars = period.getCountCars();
-		int countCities = this.cities.size();
-		// System.out.println(countCities);
-		Random rndm = new Random();
-		int currentCity;
-		genom.add(-1);
-		countCars--;
-		double changeCar;
-		for (int i = 0; i < countCities - 1; i++) {
-			currentCity = rndm.nextInt((countCities - 1) + 1);
-			// currentCity = (int)((Math.random()) * (countCities-1) + 1);
-			changeCar = rndm.nextDouble();
-			// System.out.println("runde: " + i + " zufallstadt " + currentCity + " wkt autowechsel " + changeCar);
-			// Marke für das erste Auto hinzufügen:
-
-			if (!genom.contains(currentCity) && currentCity != 0) {
-
-				// wenn wkt des Autowechsels >=0.8 und anz autos noch >0 dann autowechsel
-				if (changeCar >= 0.9 && countCars > 0) {
-					// System.out.println("Autowechsel");
-					genom.add(-1);
-					countCars--;
-					i--;
-				} // füge die Stadt zur städteliste hinzu
-				else {
-					genom.add(currentCity);
-
-				}
-			} else {
-				i--;
-			}
-		}
-		if (countCars > 0) {
-//			System.out.println("Fehlen noch " + countCars + " Auto(s)");
-			for (int i = 0; i < countCars; i++) {
-				genom.add(-1);
-			}
-		}
-		// letzen seperator hinzufügen damit das letzte auto auch der autoliste hinzugeüfgt werden kann
-		genom.add(-1);
-		// List<Integer> sortedCities = new ArrayList<Integer>();
-		// sortedCities.addAll(cities);
-		// Collections.sort(sortedCities);
-		// System.out.println(sortedCities);
-		return genom;
 	}
 
 	/**
@@ -162,5 +99,67 @@ public class RandomStart {
 		}
 
 		return cars;
+	}
+
+	/**
+	 * Zufällige verteilen der Städte mit Seperator (-1)
+	 * damit erkannt wird wann das nächste auto an der reihe ist
+	 * Dabei werden nie mehr Seperatoren als Autos eingesetzt.
+	 * Die Seps werden zufällig gesetzt. Sollten alls Seps gesetzt
+	 * sein so bekommt das letzte auto die Restlichen Städte.
+	 * Des Weiteren wird auch nciht auf die Max Ladung der Autos geachtet. <br>
+	 * Die Basis steht nicht mehr in der Indi List drin. Wird aber bei
+	 * der Berechnung mit einbezogen. -1 Steht also für neues Auto Startet
+	 * von 0 (basis) bzw. endet bei Basis und anderes Auto fährt von Basis los
+	 * 
+	 * @return Die Liste mit den Städte nr. und Seperatoren
+	 */
+	public List<Integer> startRndmCityList() {
+		List<Integer> genom = new ArrayList<Integer>();
+		int countCars = period.getCountCars();
+		int countCities = this.cities.size();
+		// System.out.println(countCities);
+		Random rndm = new Random();
+		int currentCity;
+		genom.add(-1);
+		countCars--;
+		double changeCar;
+		for (int i = 0; i < countCities - 1; i++) {
+			currentCity = rndm.nextInt((countCities - 1) + 1);
+			// currentCity = (int)((Math.random()) * (countCities-1) + 1);
+			changeCar = rndm.nextDouble();
+			// System.out.println("runde: " + i + " zufallstadt " + currentCity + " wkt autowechsel " + changeCar);
+			// Marke für das erste Auto hinzufügen:
+
+			if (!genom.contains(currentCity) && currentCity != 0) {
+
+				// wenn wkt des Autowechsels >=0.8 und anz autos noch >0 dann autowechsel
+				if (changeCar >= 0.9 && countCars > 0) {
+					// System.out.println("Autowechsel");
+					genom.add(-1);
+					countCars--;
+					i--;
+				} // füge die Stadt zur städteliste hinzu
+				else {
+					genom.add(currentCity);
+
+				}
+			} else {
+				i--;
+			}
+		}
+		if (countCars > 0) {
+			// System.out.println("Fehlen noch " + countCars + " Auto(s)");
+			for (int i = 0; i < countCars; i++) {
+				genom.add(-1);
+			}
+		}
+		// letzen seperator hinzufügen damit das letzte auto auch der autoliste hinzugeüfgt werden kann
+		genom.add(-1);
+		// List<Integer> sortedCities = new ArrayList<Integer>();
+		// sortedCities.addAll(cities);
+		// Collections.sort(sortedCities);
+		// System.out.println(sortedCities);
+		return genom;
 	}
 }

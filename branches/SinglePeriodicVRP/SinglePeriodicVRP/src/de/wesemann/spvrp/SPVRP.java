@@ -16,11 +16,6 @@ import de.wesemann.spvrp.data.Period;
 
 public class SPVRP {
 
-	private List<City>		cities		= new ArrayList<City>();
-	private Period			period;
-
-	private String	dataName	= "p14";
-
 	/**
 	 * @param args
 	 */
@@ -37,8 +32,9 @@ public class SPVRP {
 			e.printStackTrace();
 		}
 
-		Algorithm alg = new Algorithm();
-		alg = new Algorithm(spvrp.cities, spvrp.period, 60, 100000);
+		// Algorithm alg = new Algorithm();
+		Algorithm alg = new Algorithm(spvrp.cities, spvrp.period, 60, 100000);
+		alg.setStorePath("TestCase_60_08_01_OR_Fitness");
 		alg.setGeladeneDatei(spvrp.dataName);
 		alg.setPx(0.8); // setzen der Rekombwkt
 		alg.setMutWkt(0.1); // Mutationswkt
@@ -47,9 +43,28 @@ public class SPVRP {
 		System.out.println("GesDauer: " + (System.currentTimeMillis() - start) + "ms");
 	}
 
+	private List<City>	cities					= new ArrayList<City>();
+	private Period		period;
+	private double		totalServiceDuration[]	= null;					// Wie lang sich die autos insg. in den Städten aufhalten
+
+	private double		maxDemand				= 0;						// max. Demand of all Costumers
+
+	private String		dataName				= "p14";
+
+	public void addNeighbours() {
+		for (City c : cities) {
+			for (City cn : cities) {
+				if (cn.getCityNumber() != c.getCityNumber()) {
+					c.addDistanceToNeighbour(c.getCoords().distance(cn.getCoords()), cn);
+				}
+
+			}
+		}
+	}
+
 	/**
 	 * holt ein bestimmtes Problem aus dem www
-	 * Momentan noch Multi Period
+	 * Momentan noch Single Period
 	 * 
 	 * für Single Period siehe: http://neumann.hec.ca/chairedistributique/data/vrp/old/p14
 	 * 
@@ -57,6 +72,7 @@ public class SPVRP {
 	 *            das Problem im Form eines Strings
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private void loadProblem(String problem) {
 
 		// String url = System.getProperty("user.dir") + "src/de/wesemann/vehicleroutinig/specialproblems/pr01.txt";
@@ -119,7 +135,7 @@ public class SPVRP {
 		int[] maxDuration = null;
 		int[] maxLoad = null;
 		int linesplitsize = 0;
-		int maxDemand = 0;
+
 		while ((line = br.readLine()) != null) {
 
 			linesplit.addAll(Arrays.asList(line.split(" ")));
@@ -175,6 +191,7 @@ public class SPVRP {
 				period.setCountCars(countCars);
 				maxDuration = new int[periods];
 				maxLoad = new int[periods];
+				totalServiceDuration = new double[periods];
 			}
 			// Die Perioden (maxduration und vehicleload)
 			else if (i <= periods) {
@@ -182,6 +199,7 @@ public class SPVRP {
 				maxLoad[i - 1] = Integer.valueOf(linesplit.get(1));
 				period.addMaxDurationForTheDay(i - 1, maxDuration[i - 1]);
 				period.addMaxLoadPerDayPerCar(i - 1, maxLoad[i - 1]);
+				totalServiceDuration[i - 1] = 0;
 			}
 
 			/*
@@ -198,37 +216,28 @@ public class SPVRP {
 			 * linesplit[9] = end of time window (latest time for start of service), if any
 			 */
 			else {
-				int x = linesplit.size();
 
 				City city = new City();
 				cities.add(city);
 				city.setCityNumber(Integer.valueOf(linesplit.get(0))); // Nummer
 				city.setCoords(new Point(Integer.valueOf(linesplit.get(1)), Integer.valueOf(linesplit.get(2)))); // Coords
 				city.setServiceDuration(Integer.valueOf(linesplit.get(3))); // Service Dauer
+
 				city.setDemand(Integer.valueOf(linesplit.get(4))); // Der Bedarf (wird vom maxBedarf des Autos abgezogen oder raufgerechnet (weiss ich
 																	// noch nciht so genau))
 				maxDemand = maxDemand + Integer.valueOf(linesplit.get(4));
 				city.setFrequenzyOfVisit(Integer.valueOf(linesplit.get(5))); // wie oft muss die Stadt angefahren werden
 				for (int j = 0; j < Integer.valueOf(linesplit.get(6)); j++) {
 					city.addVisitCombination(Integer.valueOf(linesplit.get(7 + j)));
+					totalServiceDuration[j] = totalServiceDuration[j] + Integer.valueOf(linesplit.get(3));
 				}
 
 			}
 			linesplit.clear();
 			i++;
 		}
+		period.setMaxServiceDurationPerDay(totalServiceDuration);
 		System.out.println("GesLast der Kunden: " + maxDemand);
 		addNeighbours();
-	}
-
-	public void addNeighbours() {
-		for (City c : cities) {
-			for (City cn : cities) {
-				if (cn.getCityNumber() != c.getCityNumber()) {
-					c.addDistanceToNeighbour(c.getCoords().distance(cn.getCoords()), cn);
-				}
-
-			}
-		}
 	}
 }

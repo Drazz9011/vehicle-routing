@@ -13,17 +13,21 @@ public class Period {
 	/**
 	 * Die Anzahl der Tage einer Periode
 	 */
-	private int		days;
+	private int			days;
 	/**
 	 * Die Maximal Dauer pro Tag
 	 */
-	private int[]	maxDurationPerDay;
+	private int[]		maxDurationPerDay;
 
-	private int[]	maxLoadPerDayPerCar;
+	private int[]		maxLoadPerDayPerCar;
+	/**
+	 * The maximum service duration for all costumer and per day
+	 */
+	private double[]	maxServiceDurationPerDay;
 
-	private int		countCars;
-	private double	totalDuration;			// ohne Service Zeit
-	private double	totalDemand;
+	private int			countCars;
+	private double		totalDuration;				// ohne Service Zeit
+	private double		totalDemand;
 
 	public Period(int days) {
 		maxDurationPerDay = new int[days];
@@ -110,6 +114,13 @@ public class Period {
 	}
 
 	/**
+	 * @return the maxServiceDurationPerDay
+	 */
+	public double[] getMaxServiceDurationPerDay() {
+		return maxServiceDurationPerDay;
+	}
+
+	/**
 	 * @param countCars
 	 *            the countCars to set
 	 */
@@ -146,6 +157,14 @@ public class Period {
 	public void setMaxLoadPerDayPerCar(int[] maxLoadPerDayPerCar) {
 
 		this.maxLoadPerDayPerCar = maxLoadPerDayPerCar;
+	}
+
+	/**
+	 * @param maxServiceDurationPerDay
+	 *            the maxServiceDurationPerDay to set
+	 */
+	public void setMaxServiceDurationPerDay(double[] maxServiceDurationPerDay) {
+		this.maxServiceDurationPerDay = maxServiceDurationPerDay;
 	}
 
 	/*
