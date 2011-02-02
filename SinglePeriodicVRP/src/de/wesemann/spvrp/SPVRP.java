@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.wesemann.spvrp.calculation.Algorithm;
+import de.wesemann.spvrp.calculation.Population;
 import de.wesemann.spvrp.data.City;
 import de.wesemann.spvrp.data.Period;
 
@@ -31,12 +32,14 @@ public class SPVRP {
 
 			e.printStackTrace();
 		}
-
+		
+		
 		// Algorithm alg = new Algorithm();
-		Algorithm alg = new Algorithm(spvrp.cities, spvrp.period, 60, 100000);
-		alg.setStorePath("TestCase_60_08_01_OR_Fitness");
+		Algorithm alg = new Algorithm(spvrp.cities, spvrp.period, 60, 50000);
+		alg.setPop(new Population());
+		alg.setStorePath("scalingFitness");
 		alg.setGeladeneDatei(spvrp.dataName);
-		alg.setPx(0.8); // setzen der Rekombwkt
+		alg.setPx(0.6); // setzen der Rekombwkt
 		alg.setMutWkt(0.1); // Mutationswkt
 		alg.steadyStateGA();
 
@@ -51,6 +54,7 @@ public class SPVRP {
 
 	private String		dataName				= "p14";
 
+	
 	public void addNeighbours() {
 		for (City c : cities) {
 			for (City cn : cities) {
@@ -237,6 +241,7 @@ public class SPVRP {
 			i++;
 		}
 		period.setMaxServiceDurationPerDay(totalServiceDuration);
+		period.setTotalDemand(maxDemand);
 		System.out.println("GesLast der Kunden: " + maxDemand);
 		addNeighbours();
 	}

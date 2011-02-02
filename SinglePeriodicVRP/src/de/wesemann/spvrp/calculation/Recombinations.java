@@ -28,6 +28,7 @@ public class Recombinations {
 		Period period = indA.getPeriod();
 		List<Integer> genomA = new ArrayList<Integer>();
 		List<Integer> genomB = new ArrayList<Integer>();
+		indC.setPop(indA.getPop());
 		indC.setTotalDemand(totalDemand);
 		indC.setTotalDuration(totalDuration);
 		indC.setPeriod(period);

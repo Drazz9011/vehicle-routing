@@ -30,6 +30,7 @@ public class Algorithm {
 	private int					anzWählendeIndis	= 4;							// Anzahl der Individuen die bei der FitnessSelektion zu wählen
 																					// sind
 	private double				mutWkt				= 0.1;
+	private Population			pop;
 	/**
 	 * Anzahl der Individuen einer Population
 	 */
@@ -40,6 +41,8 @@ public class Algorithm {
 
 	private String				geladeneDatei;
 
+	
+	
 	public Algorithm() {
 
 	}
@@ -246,13 +249,21 @@ public class Algorithm {
 		for (int i = 0; i < anzIndividuen; i++) {
 			indis.add(new Individual(i, cities, period));
 			indis.get(i).randomCityList();
-			// indis[i].printCars();
-			// System.out.println(indis.get(i).getIndiNumber() + "	" + indis.get(i).getFitness() + "	"
-			// + indis.get(i).getGenom().toString());
-			sb.append(indis.get(i).getIndiNumber() + "	" + indis.get(i).getFitness() + "	"
+			indis.get(i).setPop(getPop());
+			sb.append(indis.get(i).getIndiNumber() + "	" + indis.get(i).getDefaultFitness() + "	"
 					+ indis.get(i).getGenom().toString() + "\n");
 		}
+		Individual bestIndi = null;
 
+		for (Individual ind : indis) {
+			if (bestIndi == null) {
+				bestIndi = ind;
+			}
+			if (ind.getDefaultFitness() < bestIndi.getDefaultFitness()) {
+				bestIndi = ind;
+			}
+		}
+		pop.setBestFitness(bestIndi.getDefaultFitness());
 		store.storeData(sb.toString(), "startIndis.csv");
 	}
 
@@ -261,6 +272,7 @@ public class Algorithm {
 	 * am besten für das VRP geeignet ist
 	 */
 	public void steadyStateGA() {
+		pop.setMaxRounds(anzPopulations);
 		startRandom(); // erste population wird zufällig generiert
 
 		Individual indC = new Individual(); // das Kind indi
@@ -277,6 +289,17 @@ public class Algorithm {
 
 		// terminierungsbedingung ist (erstmal) die anzahl der Populationen
 		for (int i = 0; i < anzPopulations; i++) {
+			pop.setCurrentRound(i);
+			// average Individual
+			// with the Default Fitness value
+			double averageFitness = 0;
+			for (Individual ind : indis) {
+				averageFitness = averageFitness + ind.getFitness();
+			}
+			averageFitness = averageFitness / indis.size();
+			pop.setAverageFitness(averageFitness);
+			// pop.setBestFitness(bestIndi.getFitness());
+
 			indi1 = null;
 			indi2 = null;
 			// System.out.println("--------------Runde " + i + "-----------------------");
@@ -287,18 +310,19 @@ public class Algorithm {
 			// ---------------------------------- Rekombination ------------------------------------------------
 			u = rndm.nextDouble(); // wkt für die Rekomb
 			if (u < px) {
+				// System.out.println("Rekomb");
 				indC = Recombinations.ordnungsRekombination(indi1, indi2);
 
 			} else {
-				double totalDemand = indi1.getTotalDemand();
-				double totalDuration = indi1.getTotalDuration();
-				Period period = indi1.getPeriod();
+				// System.out.println("keine rekomb");
 				indC = new Individual();
+				indC.setPop(indi1.getPop());
+
 				indC.setGenom(indi1.getGenom());
 				indC.setCars(indi1.getCars());
-				indC.setTotalDemand(totalDemand);
-				indC.setTotalDuration(totalDuration);
-				indC.setPeriod(period);
+				indC.setTotalDemand(indi1.getTotalDemand());
+				indC.setTotalDuration(indi1.getTotalDuration());
+				indC.setPeriod(indi1.getPeriod());
 				indC.setCities(indi1.getCities());
 				indC.createCityList();
 
@@ -306,13 +330,14 @@ public class Algorithm {
 			// ------------------------------ Mutation ---------------------------------
 			u = rndm.nextDouble(); // wkt für die Rekomb
 			if (u < mutWkt) {
+				// System.out.println("Mutat");
 				Mutations.verschiebeMutation(indC);
 			}
 
-			// ----------------- Beste und schlechteste Indi raussuchen ------------------------------
 			bestIndi = null;
 			worstIndi = null;
 			for (Individual ind : indis) {
+
 				if (bestIndi == null && worstIndi == null) {
 					worstIndi = bestIndi = ind;
 				}
@@ -323,28 +348,21 @@ public class Algorithm {
 					bestIndi = ind;
 				}
 			}
-
-			// average Individual
-			double fitness = 0;
-			for (Individual ind : indis) {
-				fitness = fitness + ind.getFitness();
-			}
-			fitness = fitness / indis.size();
-
-			sbAverage.append(fitness + "\n");
+			pop.setBestFitness(bestIndi.getFitness());
+			sbAverage.append(averageFitness + "\n");
 			sbBest.append(bestIndi.getFitness() + "\n");
 			sbRecomb.append(indi1.getFitness() + ";" + indi2.getFitness() + ";" + indC.getFitness() + "\n");
 
 			// *********************Umweltselektion************************
-			Individual worst = Selections.qStufigeTurnierSelection(indis, 3, 1).get(0);
-			indC.setIndiNumber(worst.getIndiNumber());
-			indis.remove(worst);
-			indis.add(worst.getIndiNumber(), indC);
+			// Individual worst = Selections.qStufigeTurnierSelection(indis, 2, 1).get(0);
+			// indC.setIndiNumber(worst.getIndiNumber());
+			// indis.remove(worst);
+			// indis.add(worst.getIndiNumber(), indC);
 
 			// schlechteste aus der aktuellen Pop mit neuem Indi ersetzen
-			// indC.setIndiNumber(worstIndi.getIndiNumber());
-			// indis.remove(worstIndi);//vielleciht zu hart
-			// indis.add(worstIndi.getIndiNumber(), indC);
+			indC.setIndiNumber(worstIndi.getIndiNumber());
+			indis.remove(worstIndi);// vielleciht zu hart
+			indis.add(worstIndi.getIndiNumber(), indC);
 
 		}
 		System.out.println("###############alle#####################");
@@ -362,13 +380,27 @@ public class Algorithm {
 		}
 		System.out.println("****************best*******************");
 		bestIndi.printCars();
+
 		store.storeData(bestIndi.indiToString(), "bestIndiWithCars");
 		store.storeData(sbAverage.toString(), "average.csv");
-		store.closeWriter();
 		store.storeData(sbBest.toString(), "best.csv");
-		store.closeWriter();
 		store.storeData(sbRecomb.toString(), "recomb.csv");
 		store.closeWriter();
+	}
+
+	/**
+	 * @return the pop
+	 */
+	public Population getPop() {
+		return pop;
+	}
+
+	/**
+	 * @param pop
+	 *            the pop to set
+	 */
+	public void setPop(Population pop) {
+		this.pop = pop;
 	}
 
 }

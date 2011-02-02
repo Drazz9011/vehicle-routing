@@ -12,9 +12,10 @@ public class Individual implements Cloneable {
 	private List<Car>		cars	= new ArrayList<Car>();
 	private List<City>		cities	= new ArrayList<City>();
 	private Period			period;
-	private double			totalDemand;
+	private double			totalDemand;						// gesamtlast
 	private double			totalDuration;						// Die gesamte Aufenthaltsdauer +
 	private int				indiNumber;
+	private Population		pop;
 	/**
 	 * Das genom des Indis (Städte mit -1 für Autowechsel)
 	 */
@@ -125,37 +126,72 @@ public class Individual implements Cloneable {
 	}
 
 	/**
-	 * Berechnet die Fitness des Individuums
-	 * für alle Autos:<br>
-	 * <code>
+	 * calculate the defaultfitness without the
+	 * scaling
+	 * * <code>
 	 * fitness = fitness + <br>((c.getUsedDemand() / c.getMaxDemand()) * 1000); <br>
 	 * fitness = fitness + c.getUsedDuration();
 	 * </code>
 	 * 
-	 * @return die Fitness des Individuums
+	 * @return the default fitness value
 	 */
-	public double getFitness() {
-		double fitness = 0.0;
-		int emptyCars = 0;
-		int overloadedCars = 0;
+	public double getDefaultFitness() {
+
+		double fitness = 0.0; // used Duration of all cars
+
 		for (Car c : cars) {
-			// Wenn die verbrauchte Last über der maximal erlaubten ist dann
-			// adde eine wert zur fitness hinzu damit die größer und damit schlechter wird
-			// ABER: keinen festen sondern einen Prozentualen Mehrwert je weiter die MaxLast über schritten wurde!!!
-			// System.out.println("Verbrauchte Ladung: " + c.getUsedDemand() + " Max. Ladung" + c.getMaxDemand());
+
+			fitness = fitness + c.getUsedDuration();
+
+		}
+		fitness = fitness - period.getMaxServiceDurationPerDay()[0];
+
+		return fitness;
+	}
+
+	/**
+	 * gives a scale to the default Fitness value
+	 * \text{Fitness}^\prime = \text{Fitness} - (\text{Durchschnittsfitness} - \text{K}_{Mult} * \sigma)
+	 * 
+	 * @return the modified Fitness value
+	 */
+//	public double getFitness() {
+//		double fitness = 0.0;
+//		double value = 0.0; // Sum of the max between 0 and usedDemand - maxDeman to the power of 2 for each car
+//		double cost = 0.0; // used Duration of all cars
+//		double alpha = 0.0;
+//		// double mnv = period.getTotalDemand() / cars.get(1).getMaxDemand();
+//
+//		// fitness = getDefaultFitness();
+//		for (Car c : cars) {
+//
+//			// if (c.getUsedDemand() > c.getMaxDemand()) {
+//			// fitness = fitness + (((double) c.getUsedDemand() / c.getMaxDemand()) * 1000);
+//			// }
+//			value = value + Math.pow(Math.max(0, (c.getUsedDemand() - c.getMaxDemand())), 2);
+//			cost = cost + c.getUsedDuration();
+//
+//		}
+//		cost = cost - period.getMaxServiceDurationPerDay()[0];
+//		// alpha = pop.getBestFitness()
+//		// / (1.0 / (double) pop.getMaxRounds() * (Math.pow((mnv / 2) * cars.get(1).getMaxDemand(), 2)));
+//		alpha = 5;
+//		fitness = cost + alpha * pop.getCurrentRound() / pop.getMaxRounds() * value;
+//		return fitness;
+//	}
+
+	public double getFitness() {
+		double fitness = 0.0; // used Duration of all cars
+
+		for (Car c : cars) {
 			if (c.getUsedDemand() > c.getMaxDemand()) {
 				fitness = fitness + (((double) c.getUsedDemand() / c.getMaxDemand()) * 1000);
-				overloadedCars++;
-			}
-			if (c.getUsedDemand() == 0.0) {
-				emptyCars++;
 			}
 			fitness = fitness + c.getUsedDuration();
 
 		}
-		// if (overloadedCars > 0 || emptyCars > 0)
-		// fitness = fitness + ((overloadedCars + emptyCars) * 1000);
 		fitness = fitness - period.getMaxServiceDurationPerDay()[0];
+
 		return fitness;
 	}
 
@@ -224,22 +260,8 @@ public class Individual implements Cloneable {
 	}
 
 	public void printCars() {
-		System.out.println("InidNR.: " + this.indiNumber);
-		System.out.println("Fitness: " + this.getFitness());
-		for (Car c : cars) {
-			double totalServiceDuration = 0;
-			totalDemand = totalDemand + c.getUsedDemand();
-			totalDuration = totalDuration + c.getUsedDuration(); // Wie lang sind alle autow unterwegs
+		System.out.println(indiToString());
 
-			System.out.print("auto " + c.getCarNumber() + ": ");
-			for (City ci : c.getCitiesToDrive()) {
-				System.out.print("->" + ci.getCityNumber());
-				totalServiceDuration = totalServiceDuration + ci.getServiceDuration();
-			}
-			System.out.println(" Last " + c.getUsedDemand() + " Dist: " + (c.getUsedDuration() - totalServiceDuration));
-		}
-		System.out.println("demand: " + totalDemand + " duration: " + totalDuration + " ohne: "
-				+ (totalDuration - period.getMaxServiceDurationPerDay()[0]));
 	}
 
 	/**
@@ -304,4 +326,20 @@ public class Individual implements Cloneable {
 	public void setTotalDuration(double totalDuration) {
 		this.totalDuration = totalDuration;
 	}
+
+	/**
+	 * @return the pop
+	 */
+	public Population getPop() {
+		return pop;
+	}
+
+	/**
+	 * @param pop
+	 *            the pop to set
+	 */
+	public void setPop(Population pop) {
+		this.pop = pop;
+	}
+
 }

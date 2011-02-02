@@ -29,6 +29,20 @@ public class Period {
 	private double		totalDuration;				// ohne Service Zeit
 	private double		totalDemand;
 
+	/**
+	 * @return the totalDemand
+	 */
+	public double getTotalDemand() {
+		return totalDemand;
+	}
+
+	/**
+	 * @param totalDemand the totalDemand to set
+	 */
+	public void setTotalDemand(double totalDemand) {
+		this.totalDemand = totalDemand;
+	}
+
 	public Period(int days) {
 		maxDurationPerDay = new int[days];
 		maxLoadPerDayPerCar = new int[days];
